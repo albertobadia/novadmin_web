@@ -4,7 +4,7 @@
       class="mt-12"
       :items-per-page="100"
       sort-by="rtt"
-      sort-desc="true"
+      :sort-desc="true"
       dense
       :loading="loading"
       :search="search"
@@ -12,16 +12,20 @@
       :items="items"
     >
       <template v-slot:top>
+        <Traffic v-show="show_trafico"/>
         <v-app-bar dense flat dark app class="mt-12">
           <v-text-field v-model="search" hide-details prepend-icon="mdi-magnify" single-line></v-text-field>
           <v-btn icon @click="queryNodes">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
           <v-layout justify-end>
-            <v-chip style="width:100px">
-              <v-switch hide-details v-model="enabled" @change="callQueryNodes"></v-switch>
-              <div v-if="enabled" class="ml-2">ON</div>
-              <div v-if="!enabled" class="ml-2">OFF</div>
+            <v-chip class="mx-1" style="width:120px">
+              Tráfico
+              <v-switch class="ml-1" hide-details v-model="show_trafico"></v-switch>
+            </v-chip>
+            <v-chip class="mx-1" style="width:100px">
+              Ping
+              <v-switch class="ml-1" hide-details v-model="enabled" @change="callQueryNodes"></v-switch>
             </v-chip>
           </v-layout>
         </v-app-bar>
@@ -43,9 +47,14 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import Traffic from "@/components/Traffic.vue";
 
 export default {
   name: "Analisis",
+
+  components: {
+    Traffic
+  },
 
   data() {
     return {
@@ -59,7 +68,8 @@ export default {
         { text: "IP", value: "address" },
         { text: "RTT", value: "rtt" }
       ],
-      items: []
+      items: [],
+      show_trafico: false
     };
   },
 
@@ -70,8 +80,8 @@ export default {
   methods: {
     ...mapMutations(["set_title"]),
 
-    open_node(address){
-      window.open("http://" + address, '_blank');
+    open_node(address) {
+      window.open("http://" + address, "_blank");
     },
 
     online_color(online) {
