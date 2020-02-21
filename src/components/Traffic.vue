@@ -4,11 +4,11 @@
       <v-sheet>
         <v-sparkline
           :value="points"
-          height="30"
+          :height="traffic_height"
           padding="20"
           stroke-linecap="round"
           smooth
-          label-size="4"
+          :label-size="traffic_label_size"
           line-width="2"
           :gradient="gradients"
           gradient-direction="bottom"
@@ -30,7 +30,24 @@ export default {
   name: "Traffic",
 
   computed: {
-    ...mapState(["api_url"])
+    ...mapState(["api_url"]),
+    traffic_height() {
+      var value = 0;
+      if (this.$vuetify.breakpoint.xsOnly) {
+        value = 70;
+      } else {
+        value = 30;
+      }
+      return value;
+    },
+
+    traffic_label_size(){
+      if (this.$vuetify.breakpoint.xsOnly){
+        return 10
+      } else {
+        return 4
+      }
+    }
   },
 
   data() {
@@ -38,8 +55,8 @@ export default {
       watch: true,
       traffic: 0,
       speed: 1,
-      points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      points: [],
+      labels: [],
       gradients: ["#1feaea", "#7af720", "#f72047"]
     };
   },
@@ -86,10 +103,20 @@ export default {
       } finally {
         setTimeout(this.callTraffic, 1000 * parseInt(this.speed));
       }
+    },
+    set_labels_and_points() {
+      if (this.$vuetify.breakpoint.xsOnly) {
+        this.points = [0, 0, 0, 0, 0];
+        this.labels = [0, 0, 0, 0, 0];
+      } else {
+        this.points = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.labels = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      }
     }
   },
 
-  mounted() {
+  created() {
+    this.set_labels_and_points();
     this.callTraffic();
   }
 };

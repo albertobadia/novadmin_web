@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-data-table
-      class="mt-12"
+      class="mt-12 thin"
       :items-per-page="100"
       sort-by="rtt"
       :sort-desc="true"
@@ -10,16 +10,30 @@
       :search="search"
       :headers="headers"
       :items="items"
+      :mobile-breakpoint="0"
     >
       <template v-slot:top>
-        <Traffic v-show="show_trafico"/>
+        <Traffic v-show="show_trafico" />
         <v-app-bar dense flat dark app class="mt-12">
           <v-text-field v-model="search" hide-details prepend-icon="mdi-magnify" single-line></v-text-field>
           <v-btn icon @click="queryNodes">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
-          <v-layout justify-end>
+          <v-layout justify-end v-if="!$vuetify.breakpoint.xsOnly">
             <v-chip class="mx-1" style="width:120px">
+              Tráfico
+              <v-switch class="ml-1" hide-details v-model="show_trafico"></v-switch>
+            </v-chip>
+            <v-chip class="mx-1" style="width:100px">
+              Ping
+              <v-switch class="ml-1" hide-details v-model="enabled" @change="callQueryNodes"></v-switch>
+            </v-chip>
+          </v-layout>
+        </v-app-bar>
+
+        <v-app-bar dark dense flat v-if="$vuetify.breakpoint.xsOnly">
+          <v-layout justify-center>
+            <v-chip class="mx-1" style="width:100px">
               Tráfico
               <v-switch class="ml-1" hide-details v-model="show_trafico"></v-switch>
             </v-chip>
@@ -36,7 +50,11 @@
       </template>
 
       <template v-slot:item.address="{item}">
-        <v-chip @click="open_node(item.address)" class="my-1">{{item.address}}</v-chip>
+        <v-chip
+          :small="$vuetify.breakpoint.xsOnly"
+          @click="open_node(item.address)"
+          class="my-1"
+        >{{item.address}}</v-chip>
       </template>
 
       <template v-slot:header.rtt>RTT (ms)</template>
@@ -62,19 +80,25 @@ export default {
       search: "",
       enabled: true,
       sleep: 1,
-      headers: [
-        { text: "Id", value: "pk", sortable: false, width: 30 },
-        { text: "Nombre", value: "nombre" },
-        { text: "IP", value: "address" },
-        { text: "RTT", value: "rtt" }
-      ],
       items: [],
       show_trafico: false
     };
   },
 
   computed: {
-    ...mapState(["api_url"])
+    ...mapState(["api_url"]),
+    headers() {
+      var list = [
+        { text: "Nombre", value: "nombre" },
+        { text: "IP", value: "address" },
+        { text: "RTT", value: "rtt" }
+      ];
+      if (!this.$vuetify.breakpoint.xsOnly) {
+        list.unshift({ text: "Id", value: "pk", sortable: false, width: 30 });
+      }
+
+      return list;
+    }
   },
 
   methods: {

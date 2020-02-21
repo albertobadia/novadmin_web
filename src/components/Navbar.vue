@@ -2,7 +2,7 @@
   <div>
     <v-app-bar app color="primary" dark dense>
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-      <v-layout justify-center class="title">{{title}}</v-layout>
+      <div class="title">{{title}}</div>
     </v-app-bar>
 
     <v-btn v-if="false" small class="mt-6 ml-12" fab absolute left @click="toggleDrawer">
