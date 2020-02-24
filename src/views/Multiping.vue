@@ -57,6 +57,16 @@
         >{{item.address}}</v-chip>
       </template>
 
+      <template v-slot:item.nombre="{item}">
+        <div v-if="!$vuetify.breakpoint.xsOnly">{{item.nombre}}</div>
+        <v-chip
+          dark
+          v-bind:class="online_color(item.online)"
+          small
+          v-if="$vuetify.breakpoint.xsOnly"
+        >{{item.nombre}}</v-chip>
+      </template>
+
       <template v-slot:header.rtt>RTT (ms)</template>
     </v-data-table>
   </div>
@@ -81,7 +91,7 @@ export default {
       enabled: true,
       sleep: 1,
       items: [],
-      show_trafico: false
+      show_trafico: true
     };
   },
 
