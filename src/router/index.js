@@ -6,6 +6,13 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: 'clientes',
+    component: function () {
+      return import(/* webpackChunkName: "clientes" */ '../views/Clientes.vue')
+    }
+  },
+  {
+    path: '/multiping',
     name: 'multiping',
     component: function () {
       return import(/* webpackChunkName: "multiping" */ '../views/Multiping.vue')

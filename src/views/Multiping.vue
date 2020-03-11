@@ -68,6 +68,10 @@
       </template>
 
       <template v-slot:header.rtt>RTT (ms)</template>
+
+      <template v-slot:header.pk>
+        <NodeForm @done="queryNodes" />
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -76,12 +80,14 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import Traffic from "@/components/Traffic.vue";
+import NodeForm from "@/components/forms/NodeForm.vue";
 
 export default {
   name: "Analisis",
 
   components: {
-    Traffic
+    Traffic,
+    NodeForm
   },
 
   data() {

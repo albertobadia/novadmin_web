@@ -2,7 +2,7 @@
   <div>
     <v-app-bar app color="primary" dark dense>
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-      <div class="title">{{title}}</div>
+      <div class="title" v-if="!drawer">{{title}}</div>
     </v-app-bar>
 
     <v-btn v-if="false" small class="mt-6 ml-12" fab absolute left @click="toggleDrawer">
@@ -52,9 +52,14 @@ export default {
     drawer: true,
     items: [
       {
+        title: "Clientes",
+        icon: "mdi-plus",
+        link: "/"
+      },
+      {
         title: "Multiping",
         icon: "mdi-view-dashboard",
-        link: "/"
+        link: "/multiping"
       }
     ]
   }),
