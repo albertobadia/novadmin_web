@@ -53,7 +53,7 @@ export default {
     items: [
       {
         title: "Clientes",
-        icon: "mdi-plus",
+        icon: "mdi-account",
         link: "/"
       },
       {
