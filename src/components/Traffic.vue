@@ -1,22 +1,34 @@
 <template>
   <div>
     <v-card>
-      <v-sheet>
-        <v-sparkline
-          :value="points"
-          :height="traffic_height"
-          padding="20"
-          stroke-linecap="round"
-          smooth
-          :label-size="traffic_label_size"
-          line-width="2"
-          :gradient="gradients"
-          gradient-direction="bottom"
-          :labels="labels"
-        >
-          <template v-slot:label="item">{{item.value}}</template>
-        </v-sparkline>
-      </v-sheet>
+      <v-layout xs12>
+        <v-flex xs12>
+          <v-sheet color="green lighten-5">
+            <v-sparkline
+              :value="points"
+              :height="traffic_height"
+              padding="20"
+              stroke-linecap="round"
+              smooth
+              :label-size="traffic_label_size"
+              line-width="2"
+              :gradient="gradients"
+              gradient-direction="bottom"
+              :labels="labels"
+            >
+              <template v-slot:label="item">{{item.value}}</template>
+            </v-sparkline>
+          </v-sheet>
+        </v-flex>
+        <v-flex xs2 v-show="!$vuetify.breakpoint.xsOnly">
+          <v-layout justify-center>
+            <div class="headline mt-9">
+              <v-icon x-large>mdi-download-network</v-icon>
+              {{actual_label}}
+            </div>
+          </v-layout>
+        </v-flex>
+      </v-layout>
     </v-card>
   </div>
 </template>
@@ -57,6 +69,7 @@ export default {
       speed: 1,
       points: [],
       labels: [],
+      actual_label: "",
       gradients: ["#2196f3"]
     };
   },
@@ -92,8 +105,10 @@ export default {
           this.points.push(result);
           this.points.shift();
 
-          this.labels.push(prettyBytes(result));
+          var label = prettyBytes(result);
+          this.labels.push(label);
           this.labels.shift();
+          this.actual_label = label;
         } catch (error) {
           console.log(error);
         }
