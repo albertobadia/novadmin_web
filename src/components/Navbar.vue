@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar app color="primary" dark dense>
+    <v-app-bar app color="blue lighten-1" dark dense>
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
       <div class="title" v-if="!drawer">{{title}}</div>
     </v-app-bar>
@@ -10,7 +10,7 @@
     </v-btn>
 
     <v-navigation-drawer app dark v-model="drawer">
-      <v-list-item class="blue" dark dense>
+      <v-list-item class="blue lighten-1" dark dense>
         <v-list-item-content>
           <v-list-item-title class="ml-8 title">Nov@dmin</v-list-item-title>
         </v-list-item-content>

@@ -41,11 +41,11 @@ export default {
       return value;
     },
 
-    traffic_label_size(){
-      if (this.$vuetify.breakpoint.xsOnly){
-        return 10
+    traffic_label_size() {
+      if (this.$vuetify.breakpoint.xsOnly) {
+        return 10;
       } else {
-        return 4
+        return 4;
       }
     }
   },
@@ -57,7 +57,7 @@ export default {
       speed: 1,
       points: [],
       labels: [],
-      gradients: ["#1feaea", "#7af720", "#f72047"]
+      gradients: ["#2196f3"]
     };
   },
 

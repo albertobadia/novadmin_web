@@ -126,9 +126,9 @@ export default {
 
     online_color(online) {
       if (online) {
-        return "green";
+        return "green lighten-1";
       } else {
-        return "red";
+        return "red lighten-1";
       }
     },
 
