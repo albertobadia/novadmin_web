@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-data-table
-      class="mt-12 thin"
       :items-per-page="100"
       sort-by="rtt"
       :sort-desc="true"
@@ -32,7 +31,8 @@
         </v-app-bar>
 
         <v-app-bar dark dense flat v-if="$vuetify.breakpoint.xsOnly">
-          <v-layout justify-center>
+          <v-chip>{{now_traffic}}</v-chip>
+          <v-layout justify-end>
             <v-chip class="mx-1" style="width:100px">
               Tráfico
               <v-switch class="ml-1" hide-details v-model="show_trafico"></v-switch>
@@ -102,7 +102,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["api_url"]),
+    ...mapState(["api_url", "now_traffic"]),
     headers() {
       var list = [
         { text: "Nombre", value: "nombre" },

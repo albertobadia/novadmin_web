@@ -2,7 +2,7 @@
   <div>
     <v-app-bar app color="blue lighten-1" dark dense>
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-      <div class="title" v-if="!drawer">{{title}}</div>
+      <div class="title" v-if="!drawer || force_show_title">{{title}}</div>
     </v-app-bar>
 
     <v-btn v-if="false" small class="mt-6 ml-12" fab absolute left @click="toggleDrawer">
@@ -45,7 +45,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["title"])
+    ...mapState(["title", "force_show_title"])
   },
 
   data: () => ({

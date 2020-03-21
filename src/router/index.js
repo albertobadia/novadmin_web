@@ -17,6 +17,13 @@ const routes = [
     component: function () {
       return import(/* webpackChunkName: "multiping" */ '../views/Multiping.vue')
     }
+  },
+  {
+    path: '/cliente/:pk',
+    name: 'cliente',
+    component: function () {
+      return import(/* webpackChunkName: "cliente" */ '../views/Cliente.vue')
+    }
   }
 ]
 

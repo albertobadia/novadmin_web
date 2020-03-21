@@ -8,14 +8,18 @@ export default new Vuex.Store({
     site_title: "HPSJ Laboratorio",
     api_url: "https://server.novadmin.dynu.net/",
     title: "",
-    title_show: true,
+    force_show_title: false,
+    now_traffic: ""
   },
   mutations: {
     set_title(state, title){
       state.title = title
     },
-    title_show(state, show){
-      state.title_show = show
+    set_force_show_title(state, show){
+      state.force_show_title = show
+    },
+    set_now_traffic(state, traffic){
+      state.now_traffic = traffic
     }
   },
   actions: {

@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-data-table
-      class="mt-12 thin"
       :search="search"
       :loading="loading"
       :items="items"
@@ -26,7 +25,7 @@
 
       <template v-slot:item.pk="{item}">
         <v-hover v-slot:default="{hover}">
-          <v-btn icon :small="$vuetify.breakpoint.xsOnly">
+          <v-btn icon :small="$vuetify.breakpoint.xsOnly" :to="'/cliente/' + item.pk">
             <v-icon v-show="hover">mdi-eye</v-icon>
             <v-icon small v-show="!hover">mdi-dots-horizontal</v-icon>
           </v-btn>
@@ -57,7 +56,7 @@ export default {
       search: "",
       items: [],
       headers: [
-        { text: "", value: "pk", sortable: false, width: 30},
+        { text: "", value: "pk", sortable: false, width: 30 },
         { text: "Nombre", value: "nombre" },
         { text: "Dni", value: "dni" },
         { text: "Domicilio", value: "direccion" }
@@ -108,7 +107,7 @@ export default {
   },
 
   created() {
-    this.set_title("Clientes")
+    this.set_title("Clientes");
     this.queryClientes();
   }
 };

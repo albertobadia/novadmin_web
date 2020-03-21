@@ -35,7 +35,7 @@
 
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 const prettyBytes = require("pretty-bytes");
 
 export default {
@@ -75,6 +75,7 @@ export default {
   },
 
   methods: {
+    ...mapMutations(["set_now_traffic"]),
     callTraffic() {
       if (this.watch) {
         this.queryTraffic();
@@ -102,10 +103,12 @@ export default {
           result = parseInt(result);
 
           this.traffic = result;
+          this.set_now_traffic(prettyBytes(result))
+
           this.points.push(result);
           this.points.shift();
 
-          var label = prettyBytes(result);
+          var label = prettyBytes(result);    
           this.labels.push(label);
           this.labels.shift();
           this.actual_label = label;
