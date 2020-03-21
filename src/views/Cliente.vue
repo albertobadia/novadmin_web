@@ -12,8 +12,13 @@
 
           <v-divider class="mt-1 mb-2"></v-divider>
           <v-text-field v-model="nombre" label="Nombre" prepend-icon="mdi-account" readonly></v-text-field>
-          <v-text-field v-model="direccion" label="Domicilio" prepend-icon="mdi-account" readonly></v-text-field>
-          <v-text-field v-model="dni" label="DNI" prepend-icon="mdi-account" readonly></v-text-field>
+          <v-text-field
+            v-model="direccion"
+            label="Domicilio"
+            prepend-icon="mdi-map-marker"
+            readonly
+          ></v-text-field>
+          <v-text-field v-model="dni" label="DNI" prepend-icon="mdi-card-text" readonly></v-text-field>
         </v-container>
       </v-flex>
 
@@ -23,10 +28,16 @@
             <v-card>
               <v-list>
                 <v-container v-for="telefono in telefonos" v-bind:key="telefono.pk">
-                  <v-chip>{{telefono.telefono}}</v-chip>
+                  <v-chip>
+                    <v-icon class="mr-1">mdi-cellphone-android</v-icon>
+                    {{telefono.telefono}}
+                  </v-chip>
                 </v-container>
                 <v-container v-for="correo in correos" v-bind:key="correo.pk">
-                  <v-chip>{{correo.correo}}</v-chip>
+                  <v-chip>
+                    <v-icon class="mr-1">mdi-email</v-icon>
+                    {{correo.correo}}
+                  </v-chip>
                 </v-container>
               </v-list>
             </v-card>
@@ -38,12 +49,17 @@
         <v-container>
           <v-card>
             <v-data-table
+              disable-sort
               class="grey darken-3"
               dark
               hide-default-footer
               :items="servicios"
               :headers="headers"
-            ></v-data-table>
+            >
+              <template v-slot:item.pk="{item}">
+                <v-chip dark v-bind:class="servicioColor(item.estado)">{{item.pk}}</v-chip>
+              </template>
+            </v-data-table>
           </v-card>
         </v-container>
       </v-flex>
@@ -75,14 +91,27 @@ export default {
       servicios: [],
       headers: [
         { text: "", value: "pk", sortable: false, width: 30 },
-        { text: "Domicilio", value: "direccion" },
-        { text: "IP", value: "ip" }
+        { text: "Estado", value: "estado", sortable: false },
+        { text: "Domicilio", value: "direccion", sortable: false },
+        { text: "IP", value: "ip" },
+        { text: "IP Antena", value: "ipAntena" }
       ]
     };
   },
 
   methods: {
     ...mapMutations(["set_title", "set_force_show_title"]),
+
+    servicioColor(estado) {
+      switch (estado) {
+        case "Activo":
+          return "green";
+        case "Suspendido":
+          return "red";
+        case "Retirado":
+          return "brown";
+      }
+    },
 
     async queryCliente() {
       this.loading = true;
@@ -112,6 +141,7 @@ export default {
                       estado
                       direccion
                       ip
+                      ipAntena
                     }
                   }
                 }
@@ -156,7 +186,6 @@ export default {
         for (var item of result.servicios.edges) {
           this.servicios.push(item.node);
         }
-
       } catch (error) {
         console.log(error);
       } finally {
