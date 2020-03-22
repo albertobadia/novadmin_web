@@ -60,6 +60,16 @@ export default {
         title: "Multiping",
         icon: "mdi-view-dashboard",
         link: "/multiping"
+      },
+      {
+        title: "Reclamos",
+        icon: "mdi-alert-circle",
+        link: "/reclamos"
+      },
+      {
+        title: "Instalaciones",
+        icon: "mdi-pipe-disconnected",
+        link: "/instalaciones"
       }
     ]
   }),
