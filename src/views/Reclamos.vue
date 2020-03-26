@@ -2,7 +2,7 @@
   <div>
     <v-data-table :items="items" :headers="headers" :search="search" :loading="loading">
       <template v-slot:top>
-        <v-app-bar dense flat dark app class="mt-12">
+        <v-app-bar dense flat dark class="mt-12">
           <v-text-field v-model="search" hide-details prepend-icon="mdi-magnify" single-line></v-text-field>
           <v-btn icon @click="queryReclamos">
             <v-icon>mdi-cached</v-icon>

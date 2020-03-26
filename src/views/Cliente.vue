@@ -57,7 +57,9 @@
               :headers="headers"
             >
               <template v-slot:item.pk="{item}">
-                <v-chip dark v-bind:class="servicioColor(item.estado)">{{item.pk}}</v-chip>
+                <v-btn icon :to="'/ping/' + item.pk">
+                  <v-icon>mdi-google-analytics</v-icon>
+                </v-btn>
               </template>
             </v-data-table>
           </v-card>
@@ -90,7 +92,7 @@ export default {
       correos: [],
       servicios: [],
       headers: [
-        { text: "", value: "pk", sortable: false, width: 30 },
+        { text: "Acciones", value: "pk", sortable: false, width: 30 },
         { text: "Estado", value: "estado", sortable: false },
         { text: "Domicilio", value: "direccion", sortable: false },
         { text: "IP", value: "ip" },
@@ -111,6 +113,10 @@ export default {
         case "Retirado":
           return "brown";
       }
+    },
+
+    open_ping(servicio) {
+      window.open("/ping/" + servicio);
     },
 
     async queryCliente() {
@@ -196,8 +202,10 @@ export default {
 
   created() {
     this.set_title("Datos del cliente");
-    this.set_force_show_title(true);
     this.queryCliente();
+    setTimeout(() => {
+      this.set_force_show_title(true);
+    }, 1000);
   },
 
   destroyed() {
