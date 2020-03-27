@@ -62,7 +62,11 @@ export default {
 
   methods: {
     open_host(host) {
-      window.open("http://" + host);
+      var url = "http://" + host
+      if (this.is_router){
+        url += ":8080"
+      }
+      window.open(url);
     },
 
     callPing() {
