@@ -1,5 +1,14 @@
 <template>
   <div v-if="!loading">
+    <v-app-bar flat dense dark class="grey darken-3">
+      <v-chip class="green lighten-1" :to="'/cliente/' + cliente">
+        <v-icon class="mr-2">mdi-account</v-icon>
+        {{nombre}}
+      </v-chip>
+      <v-spacer></v-spacer>
+      <v-icon class="mr-2">mdi-map-marker</v-icon>
+      {{domicilio}}
+    </v-app-bar>
     <v-layout xs12 wrap>
       <v-flex xs12 sm6>
         <v-container>
@@ -12,6 +21,7 @@
         </v-container>
       </v-flex>
     </v-layout>
+    <QueueTraffic v-bind:host="ip_router" />
   </div>
 </template>
 
@@ -19,19 +29,24 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import PingToIp from "@/components/PingToIp.vue";
+import QueueTraffic from "@/components/QueueTraffic.vue";
 
 export default {
   name: "Ping",
 
   components: {
-    PingToIp
+    PingToIp,
+    QueueTraffic
   },
 
   data() {
     return {
       loading: false,
       ip_router: "",
-      ip_antena: ""
+      ip_antena: "",
+      cliente: "",
+      nombre: "",
+      domicilio: ""
     };
   },
 
@@ -63,6 +78,7 @@ export default {
                 ipAntena
                 direccion
                 cliente{
+                  pk
                   nombre
                 }
               }
@@ -72,6 +88,9 @@ export default {
         result = await result.data.data.servicio;
         this.ip_router = result.ip;
         this.ip_antena = result.ipAntena;
+        this.cliente = result.cliente.pk;
+        this.nombre = result.cliente.nombre;
+        this.domicilio = result.direccion;
       } catch (error) {
         console.log(error);
       } finally {

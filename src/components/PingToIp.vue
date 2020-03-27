@@ -108,8 +108,12 @@ export default {
     }
   },
 
-  mounted() {
-    this.queryPing();
+  created() {
+    this.callPing();
+  },
+
+  destroyed() {
+    this.ping = false;
   }
 };
 </script>
