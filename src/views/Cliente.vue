@@ -61,6 +61,10 @@
                   <v-icon>mdi-google-analytics</v-icon>
                 </v-btn>
               </template>
+
+              <template v-slot:item.estado="{item}">
+                <v-chip dark v-bind:class="servicioColor(item.estado)">{{item.estado}}</v-chip>
+              </template>
             </v-data-table>
           </v-card>
         </v-container>

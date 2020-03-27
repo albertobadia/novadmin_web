@@ -10,7 +10,7 @@
       <v-sheet>
         <v-sparkline
           :value="points"
-          height="50"
+          height="70"
           padding="20"
           stroke-linecap="round"
           smooth

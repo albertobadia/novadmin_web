@@ -1,15 +1,18 @@
 <template>
   <div>
     <v-card>
-      <v-app-bar dense dark class="pl-0 pr-0"></v-app-bar>
       <v-layout xs12 wrap>
         <v-flex xs12 sm6>
           <v-container>
             <v-card>
+              <v-app-bar dense dark flat class="blue lighten-1">
+                <v-icon class="mr-2">mdi-upload-network</v-icon>Upload :
+                <div class="ml-2">{{tx}}</div>
+              </v-app-bar>
               <v-sheet>
                 <v-sparkline
                   :value="tx_points"
-                  height="50"
+                  height="70"
                   padding="20"
                   stroke-linecap="round"
                   smooth
@@ -28,10 +31,14 @@
         <v-flex xs12 sm6>
           <v-container>
             <v-card>
+              <v-app-bar dense dark flat class="red lighten-1">
+                <v-icon class="mr-2">mdi-download-network</v-icon>Download :
+                <div class="ml-2">{{rx}}</div>
+              </v-app-bar>
               <v-sheet>
                 <v-sparkline
                   :value="rx_points"
-                  height="50"
+                  height="70"
                   padding="20"
                   stroke-linecap="round"
                   smooth
@@ -54,6 +61,7 @@
 
 <script>
 import { mapState } from "vuex";
+const prettyBytes = require("pretty-bytes");
 
 export default {
   name: "QueueTraffic",
@@ -69,7 +77,7 @@ export default {
   data() {
     return {
       active: true,
-      speed: 1,
+      speed: 8,
       tx: "",
       rx: "",
       tx_points: [0, 0, 0, 0, 0],
@@ -110,22 +118,22 @@ export default {
         });
         result = await result.data.data.queue.rate;
 
-        console.log(result)
+        this.tx = parseInt(result.split("/")[0]);
+        this.rx = parseInt(result.split("/")[1]);
 
-        this.tx = parseInt(result.split("/")[0] / 1024)
-        this.rx = parseInt(result.split("/")[1] / 1024)
+        this.tx_points.push(parseInt(this.tx / 1024));
+        this.rx_points.push(parseInt(this.rx / 1024));
 
-        this.tx_points.push(this.tx)
-        this.rx_points.push(this.rx)
+        this.tx = prettyBytes(this.tx);
+        this.rx = prettyBytes(this.rx);
 
-        this.tx_points.shift()
-        this.rx_points.shift()
-
+        this.tx_points.shift();
+        this.rx_points.shift();
       } catch (error) {
         console.log(error);
         return [];
       } finally {
-        setTimeout(this.callQueryTraffic(), 1000 * parseInt(this.speed));
+        setTimeout(this.callQueryTraffic, 1000 * parseInt(this.speed));
       }
     }
   },
@@ -134,8 +142,8 @@ export default {
     this.callQueryTraffic();
   },
 
-  destroyed(){
-    this.active = false
+  destroyed() {
+    this.active = false;
   }
 };
 </script>
