@@ -2,9 +2,16 @@
   <div>
     <v-card>
       <v-app-bar dense dark class="pl-0 pr-0">
-        <v-chip @click="open_host(host)">{{host}}</v-chip>
+        <v-chip @click="open_host(host)">
+          <v-icon class="mr-2" v-if="is_router">mdi-router-wireless</v-icon>
+          <v-icon class="mr-2" v-if="is_antena">mdi-video-input-antenna</v-icon>
+          {{host}}
+        </v-chip>
         <v-layout justify-end>
-          <v-chip>RTT : {{time}} ms</v-chip>
+          <v-chip dark class="grey darken-1">
+            {{time}} ms
+            <v-icon class="ml-2">mdi-console-network-outline</v-icon>
+          </v-chip>
         </v-layout>
       </v-app-bar>
       <v-sheet>
@@ -34,7 +41,9 @@ export default {
   name: "PingToIp",
 
   props: {
-    host: String
+    host: String,
+    is_router: Boolean,
+    is_antena: Boolean
   },
 
   computed: {

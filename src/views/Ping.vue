@@ -12,12 +12,12 @@
     <v-layout xs12 wrap>
       <v-flex xs12 sm6>
         <v-container>
-          <PingToIp v-bind:host="ip_antena" />
+          <PingToIp v-bind:is_antena="true" v-bind:host="ip_antena" />
         </v-container>
       </v-flex>
       <v-flex xs12 sm6>
         <v-container>
-          <PingToIp v-bind:host="ip_router" />
+          <PingToIp v-bind:is_router="true" v-bind:host="ip_router" />
         </v-container>
       </v-flex>
     </v-layout>
