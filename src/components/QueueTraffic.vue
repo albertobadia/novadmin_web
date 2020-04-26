@@ -67,7 +67,7 @@ export default {
   name: "QueueTraffic",
 
   props: {
-    host: String
+    name: String
   },
 
   computed: {
@@ -77,7 +77,7 @@ export default {
   data() {
     return {
       active: true,
-      speed: 8,
+      speed: 1,
       tx: "",
       rx: "",
       tx_points: [0, 0, 0, 0, 0],
@@ -107,8 +107,8 @@ export default {
               `
               query
               {
-                queue(address:"` +
-              this.host +
+                queue(name:"` +
+              this.name +
               `"){
                   rate
                 }
@@ -121,8 +121,8 @@ export default {
         this.tx = parseInt(result.split("/")[0]);
         this.rx = parseInt(result.split("/")[1]);
 
-        this.tx_points.push(parseInt(this.tx / 1024));
-        this.rx_points.push(parseInt(this.rx / 1024));
+        this.tx_points.push(parseInt(this.tx / 1000));
+        this.rx_points.push(parseInt(this.rx / 1000));
 
         this.tx = prettyBytes(this.tx);
         this.rx = prettyBytes(this.rx);

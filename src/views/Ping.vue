@@ -21,7 +21,7 @@
         </v-container>
       </v-flex>
     </v-layout>
-    <QueueTraffic v-bind:host="ip_router" />
+    <QueueTraffic v-bind:name="queue_name" />
   </div>
 </template>
 
@@ -51,7 +51,10 @@ export default {
   },
 
   computed: {
-    ...mapState(["api_url"])
+    ...mapState(["api_url"]),
+    queue_name() {
+      return this.nombre + "-" + this.$route.params.pk;
+    }
   },
 
   methods: {

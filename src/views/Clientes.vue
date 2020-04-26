@@ -17,23 +17,8 @@
         </v-app-bar>
       </template>
 
-      <template v-slot:header.pk>
-        <v-btn icon>
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </template>
-
-      <template v-slot:item.pk="{item}">
-        <v-hover v-slot:default="{hover}">
-          <v-btn icon :small="$vuetify.breakpoint.xsOnly" :to="'/cliente/' + item.pk">
-            <v-icon v-show="hover">mdi-eye</v-icon>
-            <v-icon small v-show="!hover">mdi-dots-horizontal</v-icon>
-          </v-btn>
-        </v-hover>
-      </template>
-
       <template v-slot:item.nombre="{item}">
-        <v-chip class="grey lighten-2">{{item.nombre}}</v-chip>
+        <v-chip class="grey lighten-2" :to="'/cliente/' + item.pk">{{item.nombre}}</v-chip>
       </template>
     </v-data-table>
   </div>
@@ -56,7 +41,6 @@ export default {
       search: "",
       items: [],
       headers: [
-        { text: "", value: "pk", sortable: false, width: 30 },
         { text: "Nombre", value: "nombre" },
         { text: "Dni", value: "dni" },
         { text: "Domicilio", value: "direccion" }

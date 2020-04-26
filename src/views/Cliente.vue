@@ -57,9 +57,7 @@
               :headers="headers"
             >
               <template v-slot:item.pk="{item}">
-                <v-btn icon :to="'/ping/' + item.pk">
-                  <v-icon>mdi-google-analytics</v-icon>
-                </v-btn>
+                <ping v-bind:servicio="item.pk" />
               </template>
 
               <template v-slot:item.estado="{item}">
@@ -76,9 +74,14 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import ping from "@/components/ping.vue"
 
 export default {
   name: "Cliente",
+
+  components:{
+    ping
+  },
 
   computed: {
     ...mapState(["api_url"])
