@@ -3,7 +3,7 @@
     <v-card>
       <v-layout xs12 wrap>
         <v-flex xs12 sm6>
-          <v-container>
+          <v-container class="pa-1">
             <v-card>
               <v-app-bar dense dark flat class="blue lighten-1">
                 <v-icon class="mr-2">mdi-upload-network</v-icon>Upload :
@@ -29,7 +29,7 @@
         </v-flex>
 
         <v-flex xs12 sm6>
-          <v-container>
+          <v-container class="pa-1">
             <v-card>
               <v-app-bar dense dark flat class="red lighten-1">
                 <v-icon class="mr-2">mdi-download-network</v-icon>Download :
@@ -77,7 +77,7 @@ export default {
   data() {
     return {
       active: true,
-      speed: 1,
+      speed: 3,
       tx: "",
       rx: "",
       tx_points: [0, 0, 0, 0, 0],

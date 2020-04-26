@@ -22,6 +22,14 @@
         </v-app-bar>
       </template>
 
+      <template v-slot:item.pk="{item}">
+        <ping v-bind:servicio="item.servicio.pk" />
+      </template>
+
+      <template v-slot:item.servicio.cliente.nombre="{item}">
+        <v-chip :to="'/cliente/' + item.servicio.cliente.pk">{{item.servicio.cliente.nombre}}</v-chip>
+      </template>
+
       <template v-slot:item.fecha="{item}">{{formatDate(item.fecha)}}</template>
     </v-data-table>
   </div>
@@ -30,9 +38,14 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import ping from "@/components/ping.vue";
 
 export default {
   name: "Reclamos",
+
+  components: {
+    ping
+  },
 
   computed: {
     ...mapState(["api_url"]),
@@ -43,8 +56,8 @@ export default {
         string += 'estado: "Abierto"';
       }
       if (this.imprimir) {
-        if (string){
-          string += ', '
+        if (string) {
+          string += ", ";
         }
         string += 'imprimir: "True"';
       }
@@ -90,8 +103,10 @@ export default {
                     estado
                     imprimir
                     servicio{
+                      pk
                       direccion
                       cliente{
+                        pk
                         nombre
                       }
                     }
@@ -123,10 +138,11 @@ export default {
       abierto: true,
       imprimir: true,
       headers: [
-        { text: "Nombre", value: "servicio.cliente.nombre" },
+        { text: "Acciones", value: "pk" },
+        { text: "Cliente", value: "servicio.cliente.nombre" },
         { text: "Domicilio", value: "servicio.direccion" },
         { text: "Asunto", value: "asunto" },
-        { text: "Fecha", value: "fecha" }
+        { text: "Creacion", value: "fecha" }
       ]
     };
   },

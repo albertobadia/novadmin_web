@@ -31,14 +31,7 @@ const routes = [
     component: function () {
       return import(/* webpackChunkName: "reclamos" */ '../views/Reclamos.vue')
     }
-  },
-  {
-    path: '/ping/:pk',
-    name: 'ping',
-    component: function () {
-      return import(/* webpackChunkName: "ping" */ '../views/Ping.vue')
-    }
-  },
+  }
 ]
 
 const router = new VueRouter({
