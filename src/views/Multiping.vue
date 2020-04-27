@@ -87,6 +87,7 @@ import moment from "moment";
 import { mapState, mapMutations } from "vuex";
 import Traffic from "@/components/Traffic.vue";
 import NodeForm from "@/components/forms/NodeForm.vue";
+const humanizeDuration = require("humanize-duration");
 
 export default {
   name: "Analisis",
@@ -128,10 +129,23 @@ export default {
     ...mapMutations(["set_title"]),
 
     down_diff(downAt) {
-      return moment
-        .duration(moment(new Date()).diff(moment(downAt)))
-        .locale("es")
-        .humanize();
+      var duration = moment.duration(moment(new Date()).diff(moment(downAt)));
+      return humanizeDuration(duration, {
+        language: "short",
+        round: true,
+        languages: {
+          short: {
+            y: () => "A",
+            mo: () => "M",
+            w: () => "S",
+            d: () => "d",
+            h: () => "h",
+            m: () => "m",
+            s: () => "s",
+            ms: () => "ms"
+          }
+        }
+      });
     },
 
     open_node(address) {
