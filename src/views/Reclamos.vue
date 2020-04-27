@@ -23,7 +23,10 @@
       </template>
 
       <template v-slot:item.pk="{item}">
-        <ping v-bind:servicio="item.servicio.pk" />
+        <v-layout>
+          <reclamo_menu class="mr-1"/>
+          <ping v-bind:servicio="item.servicio.pk"/>
+        </v-layout>
       </template>
 
       <template v-slot:item.servicio.cliente.nombre="{item}">
@@ -38,12 +41,14 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import reclamo_menu from "@/components/reclamo/menu.vue";
 import ping from "@/components/ping.vue";
 
 export default {
   name: "Reclamos",
 
   components: {
+    reclamo_menu,
     ping
   },
 

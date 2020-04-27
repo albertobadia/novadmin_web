@@ -7,13 +7,23 @@
           <v-icon class="mr-2" v-if="is_antena">mdi-video-input-antenna</v-icon>
           {{host}}
         </v-chip>
-        <v-layout justify-end>
-          <v-chip dark class="grey darken-1">
+
+        <v-spacer></v-spacer>
+
+        <v-layout class="mt-4">
+          <v-chip dark class="grey darken-1 ml-2">
             {{time}} ms
             <v-icon class="ml-2">mdi-console-network-outline</v-icon>
           </v-chip>
+          <v-chip class="ml-2">{{seq}}</v-chip>
+
+          <v-layout class="mt-1 ml-3">
+            ARP
+            <v-switch v-model="arp" class="ml-2"></v-switch>
+          </v-layout>
         </v-layout>
       </v-app-bar>
+
       <v-sheet>
         <v-sparkline
           :value="points"
@@ -41,20 +51,52 @@ export default {
   name: "PingToIp",
 
   props: {
+    show: Boolean,
     host: String,
     is_router: Boolean,
     is_antena: Boolean
   },
 
   computed: {
-    ...mapState(["api_url"])
+    ...mapState(["api_url"]),
+
+    query_data() {
+      if (!this.arp) {
+        return (
+          `
+              query
+              {
+                ping(host:"` +
+          this.host +
+          `"){
+                  result
+                }
+              }
+              `
+        );
+      } else {
+        return (
+          `
+              query
+              {
+                pingarp(host:"` +
+          this.host +
+          `", interface: "bridge1"){
+                  result
+                }
+              }
+              `
+        );
+      }
+    }
   },
 
   data() {
     return {
-      ping: true,
+      arp: false,
       time: 0,
-      speed: 1,
+      speed: 3,
+      seq: 0,
       points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       gradients: ["#1feaea", "#7af720", "#f72047"]
     };
@@ -62,21 +104,22 @@ export default {
 
   methods: {
     open_host(host) {
-      var url = "http://" + host
-      if (this.is_router){
-        url += ":8080"
+      var url = "http://" + host;
+      if (this.is_router) {
+        url += ":8080";
       }
       window.open(url);
     },
 
     callPing() {
-      if (this.ping) {
+      if (this.show) {
         this.queryPing();
       }
     },
 
     async queryPing() {
       try {
+        this.seq += 1
         let result = await axios({
           method: "POST",
           url: this.api_url,
@@ -84,30 +127,25 @@ export default {
             Authorization: "JWT " + this.$cookies.get("token")
           },
           data: {
-            query:
-              `
-              query
-              {
-                ping(host:"` +
-              this.host +
-              `"){
-                  result
-                }
-              }
-                    `
+            query: this.query_data
           }
         });
         try {
           result = await result.data;
-          result = JSON.parse(result.data.ping.result).rtt_avg;
-          result = parseFloat(result);
-
-          if (!result) {
-            result = -1;
+          if (!this.arp){
+            result = JSON.parse(result.data.ping.result)
+          } else {
+            result = JSON.parse(result.data.pingarp.result)
           }
-
-          this.time = parseInt(result);
-          this.points.push(this.time);
+          
+          if (result.received){
+            result = parseInt(result.time);
+          } else {
+            result = -1
+          }
+          
+          this.time = result
+          this.points.push(result);
           this.points.shift();
         } catch (error) {
           console.log(error);
@@ -121,12 +159,8 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
     this.callPing();
-  },
-
-  destroyed() {
-    this.ping = false;
   }
 };
 </script>

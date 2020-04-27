@@ -6,7 +6,7 @@
 
     <v-dialog v-model="show" max-width="1000">
       <v-card>
-        <v-app-bar dark dense flat class="blue darken-1">
+        <v-app-bar dark dense flat class="title blue darken-1">
           Diagnóstico
           <v-layout justify-end>
             <v-btn icon @click="toggleShow">
@@ -18,16 +18,16 @@
         <v-layout xs12 wrap>
           <v-flex xs12 sm6>
             <v-container class="pa-1">
-              <PingToIp v-bind:is_antena="true" v-bind:host="ip_antena" />
+              <PingToIp v-bind:is_antena="true" v-bind:host="ip_antena" v-bind:show="this.show" />
             </v-container>
           </v-flex>
           <v-flex xs12 sm6>
             <v-container class="pa-1">
-              <PingToIp v-bind:is_router="true" v-bind:host="ip_router" />
+              <PingToIp v-bind:is_router="true" v-bind:host="ip_router" v-bind:show="this.show" />
             </v-container>
           </v-flex>
         </v-layout>
-        <QueueTraffic v-bind:name="queue_name" />
+        <QueueTraffic v-bind:name="queue_name" v-bind:show="this.show" />
       </v-card>
     </v-dialog>
   </div>

@@ -67,7 +67,8 @@ export default {
   name: "QueueTraffic",
 
   props: {
-    name: String
+    name: String,
+    show: Boolean
   },
 
   computed: {
@@ -76,7 +77,6 @@ export default {
 
   data() {
     return {
-      active: true,
       speed: 3,
       tx: "",
       rx: "",
@@ -89,12 +89,13 @@ export default {
 
   methods: {
     callQueryTraffic() {
-      if (this.active) {
+      if (this.show) {
         this.queryTraffic();
       }
     },
 
     async queryTraffic() {
+      console.log("dooo")
       try {
         let result = await axios({
           method: "POST",
@@ -138,12 +139,8 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
     this.callQueryTraffic();
-  },
-
-  destroyed() {
-    this.active = false;
   }
 };
 </script>
