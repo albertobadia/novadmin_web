@@ -69,6 +69,11 @@
 
       <template v-slot:header.rtt>RTT (ms)</template>
 
+      <template v-slot:item.downAt="{item}">
+        <div v-if="item.online">-</div>
+        <div v-if="!item.online">{{down_diff(item.downAt)}}</div>
+      </template>
+
       <template v-slot:header.pk>
         <NodeForm @done="queryNodes" />
       </template>
@@ -78,6 +83,7 @@
 
 
 <script>
+import moment from "moment";
 import { mapState, mapMutations } from "vuex";
 import Traffic from "@/components/Traffic.vue";
 import NodeForm from "@/components/forms/NodeForm.vue";
@@ -107,6 +113,7 @@ export default {
       var list = [
         { text: "Nombre", value: "nombre" },
         { text: "IP", value: "address" },
+        { text: "Downtime", value: "downAt" },
         { text: "RTT", value: "rtt" }
       ];
       if (!this.$vuetify.breakpoint.xsOnly) {
@@ -119,6 +126,13 @@ export default {
 
   methods: {
     ...mapMutations(["set_title"]),
+
+    down_diff(downAt) {
+      return moment
+        .duration(moment(new Date()).diff(moment(downAt)))
+        .locale("es")
+        .humanize();
+    },
 
     open_node(address) {
       window.open("http://" + address, "_blank");
@@ -157,6 +171,7 @@ export default {
                     address
                     rtt
                     online
+                    downAt
                   }
                 }
               }

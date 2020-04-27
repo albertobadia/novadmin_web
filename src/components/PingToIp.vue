@@ -93,7 +93,7 @@ export default {
 
   data() {
     return {
-      arp: false,
+      arp: true,
       time: 0,
       speed: 1,
       seq: 0,
