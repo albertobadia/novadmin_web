@@ -95,7 +95,7 @@ export default {
     return {
       arp: false,
       time: 0,
-      speed: 3,
+      speed: 1,
       seq: 0,
       points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       gradients: ["#1feaea", "#7af720", "#f72047"]
