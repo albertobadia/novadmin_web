@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-data-table
+      class="mt-12"
       :items-per-page="100"
       sort-by="rtt"
       :sort-desc="true"
@@ -9,12 +10,20 @@
       :search="search"
       :headers="headers"
       :items="items"
-      :mobile-breakpoint="0"
     >
       <template v-slot:top>
-        <Traffic v-show="show_trafico" />
+        <Traffic v-show="show_trafico" class="mt-12" />
         <v-app-bar dense flat dark app class="mt-12">
-          <v-text-field v-model="search" hide-details prepend-icon="mdi-magnify" single-line></v-text-field>
+          <v-text-field
+            color="blue darken-2"
+            dense
+            solo-inverted
+            v-model="search"
+            hide-details
+            prepend-inner-icon="mdi-magnify"
+            single-line
+            clearable
+          ></v-text-field>
           <v-btn icon @click="queryNodes">
             <v-icon>mdi-cached</v-icon>
           </v-btn>

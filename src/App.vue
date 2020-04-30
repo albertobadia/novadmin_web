@@ -3,7 +3,7 @@
     <Login v-if="!isLogin" />
     <div v-if="isLogin">
       <Navbar />
-      <v-content class="mt-12">
+      <v-content>
         <router-view></router-view>
       </v-content>
     </div>

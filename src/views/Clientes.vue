@@ -6,10 +6,20 @@
       :items="items"
       :headers="headers"
       sort-by="nombre"
+      class="mt-12"
     >
       <template v-slot:top>
         <v-app-bar dense flat dark app class="mt-12">
-          <v-text-field v-model="search" hide-details prepend-icon="mdi-magnify" single-line></v-text-field>
+          <v-text-field
+            color="blue darken-2"
+            dense
+            solo-inverted
+            v-model="search"
+            hide-details
+            prepend-inner-icon="mdi-magnify"
+            single-line
+            clearable
+          ></v-text-field>
           <v-btn icon @click="queryClientes">
             <v-icon>mdi-cached</v-icon>
           </v-btn>

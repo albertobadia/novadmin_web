@@ -95,7 +95,6 @@ export default {
     },
 
     async queryTraffic() {
-      console.log("dooo")
       try {
         let result = await axios({
           method: "POST",

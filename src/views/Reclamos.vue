@@ -1,9 +1,26 @@
 <template>
   <div>
-    <v-data-table :items="items" :headers="headers" :search="search" :loading="loading">
+    <v-data-table
+      :sort-by="order_by"
+      :sort-desc="order_desc"
+      :items="items"
+      :headers="headers"
+      :search="search"
+      :loading="loading"
+      class="mt-12"
+    >
       <template v-slot:top>
-        <v-app-bar dense flat dark>
-          <v-text-field v-model="search" hide-details prepend-icon="mdi-magnify" single-line></v-text-field>
+        <v-app-bar dense flat dark app class="mt-12">
+          <v-text-field
+            color="blue darken-2"
+            dense
+            solo-inverted
+            v-model="search"
+            hide-details
+            prepend-inner-icon="mdi-magnify"
+            single-line
+            clearable
+          ></v-text-field>
           <v-btn icon @click="queryReclamos">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
@@ -14,8 +31,13 @@
               <div v-show="!abierto">Cerrados</div>
             </v-chip>
             <v-chip>
-              <v-checkbox class="mt-6 mr-2" v-model="imprimir" @change="queryReclamos"></v-checkbox>
-              <div v-show="imprimir">Imprimir</div>
+              <v-checkbox
+                :disabled="!abierto"
+                class="mt-6 mr-2"
+                v-model="imprimir"
+                @change="queryReclamos"
+              ></v-checkbox>
+              <div v-show="imprimir">Atender</div>
               <div v-show="!imprimir">Revisar</div>
             </v-chip>
           </v-layout>
@@ -24,8 +46,8 @@
 
       <template v-slot:item.pk="{item}">
         <v-layout>
-          <reclamo_menu class="mr-1"/>
-          <ping v-bind:servicio="item.servicio.pk"/>
+          <reclamo_menu class="mr-1" v-bind:reclamo="item.pk" />
+          <ping v-bind:servicio="item.servicio.pk" />
         </v-layout>
       </template>
 
@@ -34,6 +56,20 @@
       </template>
 
       <template v-slot:item.fecha="{item}">{{formatDate(item.fecha)}}</template>
+
+      <template v-slot:item.asunto="{item}">
+        <div>
+          <v-card class="ml-3 my-2">
+            <v-card-text class="black--text">{{item.asunto}}</v-card-text>
+          </v-card>
+        </div>
+        <div v-if="item.respuesta">
+          <v-card class="ml-3 mt-2 mb-4">
+            <v-card-subtitle>{{formatDate(item.respuesta.fecha)}}</v-card-subtitle>
+            <v-card-text>{{item.respuesta.respuesta}}</v-card-text>
+          </v-card>
+        </div>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -56,16 +92,21 @@ export default {
     ...mapState(["api_url"]),
 
     filters() {
-      var string = "";
+      var string = 'orderBy: "-pk"';
+
       if (this.abierto) {
         string += 'estado: "Abierto"';
+
+        var imprimir = this.imprimir.toString();
+        imprimir = imprimir[0].toUpperCase() + imprimir.slice(1);
+
+        string += ',imprimir: "' + imprimir + '"';
+      } else {
+        string += 'estado: "Cerrado"';
       }
-      if (this.imprimir) {
-        if (string) {
-          string += ", ";
-        }
-        string += 'imprimir: "True"';
-      }
+
+      string += ",first: 100";
+
       return string;
     }
   },
@@ -107,9 +148,16 @@ export default {
                     fecha
                     estado
                     imprimir
+                    respuestas(first:1){
+                      edges{
+                        node{
+                          fecha
+                          respuesta
+                        }
+                      }
+                    }
                     servicio{
                       pk
-                      direccion
                       cliente{
                         pk
                         nombre
@@ -124,7 +172,13 @@ export default {
         this.items = [];
         result = await result.data.data.reclamos.edges;
         for (var item of result) {
-          this.items.push(item.node);
+          var reclamo = item.node;
+
+          for (var respuesta of item.node.respuestas.edges) {
+            reclamo["respuesta"] = respuesta.node;
+          }
+
+          this.items.push(reclamo);
         }
       } catch (error) {
         console.log(error);
@@ -142,12 +196,13 @@ export default {
       items: [],
       abierto: true,
       imprimir: true,
+      order_by: "fecha",
+      order_desc: true,
       headers: [
         { text: "Acciones", value: "pk" },
+        { text: "Creacion", value: "fecha" },
         { text: "Cliente", value: "servicio.cliente.nombre" },
-        { text: "Domicilio", value: "servicio.direccion" },
-        { text: "Asunto", value: "asunto" },
-        { text: "Creacion", value: "fecha" }
+        { text: "Asunto", value: "asunto" }
       ]
     };
   },
