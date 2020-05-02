@@ -5,10 +5,6 @@
       <div class="title" v-if="!drawer || force_show_title">{{title}}</div>
     </v-app-bar>
 
-    <v-btn v-if="false" small class="mt-6 ml-12" fab absolute left @click="toggleDrawer">
-      <v-icon>mdi-menu</v-icon>
-    </v-btn>
-
     <v-navigation-drawer app dark v-model="drawer">
       <v-list-item class="blue lighten-1" dark dense>
         <v-list-item-content>

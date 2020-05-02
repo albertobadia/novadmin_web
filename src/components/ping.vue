@@ -6,13 +6,18 @@
 
     <v-dialog v-model="show" max-width="1000">
       <v-card>
-        <v-app-bar dark dense flat class="title blue darken-1">
-          Diagnóstico
+        <v-app-bar dense dark flat class="title blue darken-2">
+          <v-icon class="mx-3">mdi-account</v-icon>{{nombre}}
+
           <v-layout justify-end>
             <v-btn icon @click="toggleShow">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-layout>
+        </v-app-bar>
+
+        <v-app-bar dense dark class="grey darken-3">
+          <v-icon class="mx-3">mdi-map-marker</v-icon>{{domicilio}}
         </v-app-bar>
 
         <v-layout xs12 wrap>

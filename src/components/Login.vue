@@ -36,7 +36,6 @@
 
 <script>
 import { mapState } from "vuex";
-import { mapMutations } from "vuex";
 
 export default {
   name: "Login",
@@ -56,7 +55,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["toggle_login"]),
     async DoLogin() {
       try {
         let result = await axios({

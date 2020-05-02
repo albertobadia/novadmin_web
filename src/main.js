@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import './plugins/axios'
+import Chartkick from 'vue-chartkick'
+import Chart from 'chart.js'
+import vueFilterPrettyBytes from 'vue-filter-pretty-bytes'
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
@@ -13,6 +16,8 @@ Vue.config.productionTip = false
 
 Vue.use(VueCookies)
 Vue.$cookies.config('30d')
+Vue.use(Chartkick.use(Chart))
+Vue.use(vueFilterPrettyBytes)
 
 new Vue({
   router,

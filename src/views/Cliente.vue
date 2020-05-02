@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout xs12 wrap>
+    <v-layout xs12 wrap class="mt-12">
       <v-flex xs12 sm5>
         <v-container>
           <v-hover v-slot:default="{hover}">

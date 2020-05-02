@@ -11,34 +11,21 @@
         <v-spacer></v-spacer>
 
         <v-layout class="mt-4">
-          <v-chip dark class="grey darken-1 ml-2">
+          <v-chip dark class="ml-2">
             {{time}} ms
             <v-icon class="ml-2">mdi-console-network-outline</v-icon>
           </v-chip>
-          <v-chip class="ml-2">{{seq}}</v-chip>
 
-          <v-layout class="mt-1 ml-3">
+          <v-layout class="mt-1" justify-end>
             ARP
             <v-switch v-model="arp" class="ml-2"></v-switch>
           </v-layout>
         </v-layout>
       </v-app-bar>
 
-      <v-sheet>
-        <v-sparkline
-          :value="points"
-          height="70"
-          padding="20"
-          stroke-linecap="round"
-          smooth
-          label-size="8"
-          line-width="2"
-          :gradient="gradients"
-          gradient-direction="bottom"
-        >
-          <template v-slot:label="item">{{item.value}}</template>
-        </v-sparkline>
-      </v-sheet>
+      <v-container>
+        <line-chart :data="json_points" suffix="ms" height="120px"></line-chart>
+      </v-container>
     </v-card>
   </div>
 </template>
@@ -59,6 +46,16 @@ export default {
 
   computed: {
     ...mapState(["api_url"]),
+
+    json_points() {
+      var n = 1;
+      var data = {};
+      for (var value of this.points) {
+        data[n] = value;
+        n += 1;
+      }
+      return data;
+    },
 
     query_data() {
       if (!this.arp) {

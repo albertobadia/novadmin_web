@@ -1,59 +1,21 @@
 <template>
   <div>
     <v-card>
-      <v-layout xs12 wrap>
-        <v-flex xs12 sm6>
-          <v-container class="pa-1">
-            <v-card>
-              <v-app-bar dense dark flat class="blue lighten-1">
-                <v-icon class="mr-2">mdi-upload-network</v-icon>Upload :
-                <div class="ml-2">{{tx}}</div>
-              </v-app-bar>
-              <v-sheet>
-                <v-sparkline
-                  :value="tx_points"
-                  height="70"
-                  padding="20"
-                  stroke-linecap="round"
-                  smooth
-                  label-size="8"
-                  line-width="2"
-                  :gradient="tx_gradients"
-                  gradient-direction="bottom"
-                >
-                  <template v-slot:label="item">{{item.value}}</template>
-                </v-sparkline>
-              </v-sheet>
-            </v-card>
-          </v-container>
-        </v-flex>
+      <v-app-bar dense dark flat class="grey darken-3">
+        <v-chip class="mx-2">
+          <v-icon class="mr-2">mdi-cloud-upload</v-icon>
+          {{tx | prettyBytes}}
+        </v-chip>
+        <v-chip class="mx-2">
+          <v-icon class="mr-2">mdi-cloud-download</v-icon>
+          {{rx | prettyBytes}}
+        </v-chip>
+        <v-spacer></v-spacer>
+      </v-app-bar>
 
-        <v-flex xs12 sm6>
-          <v-container class="pa-1">
-            <v-card>
-              <v-app-bar dense dark flat class="red lighten-1">
-                <v-icon class="mr-2">mdi-download-network</v-icon>Download :
-                <div class="ml-2">{{rx}}</div>
-              </v-app-bar>
-              <v-sheet>
-                <v-sparkline
-                  :value="rx_points"
-                  height="70"
-                  padding="20"
-                  stroke-linecap="round"
-                  smooth
-                  label-size="8"
-                  line-width="2"
-                  :gradient="rx_gradients"
-                  gradient-direction="bottom"
-                >
-                  <template v-slot:label="item">{{item.value}}</template>
-                </v-sparkline>
-              </v-sheet>
-            </v-card>
-          </v-container>
-        </v-flex>
-      </v-layout>
+      <v-container>
+        <area-chart :data="chart_data" height="150px"></area-chart>
+      </v-container>
     </v-card>
   </div>
 </template>
@@ -61,7 +23,6 @@
 
 <script>
 import { mapState } from "vuex";
-const prettyBytes = require("pretty-bytes");
 
 export default {
   name: "QueueTraffic",
@@ -72,7 +33,40 @@ export default {
   },
 
   computed: {
-    ...mapState(["api_url"])
+    ...mapState(["api_url"]),
+
+    json_upload() {
+      var n = 1;
+      var data = {};
+      for (var value of this.tx_points) {
+        data[n] = value;
+        n += 1;
+      }
+      return data;
+    },
+
+    json_download() {
+      var n = 1;
+      var data = {};
+      for (var value of this.rx_points) {
+        data[n] = value;
+        n += 1;
+      }
+      return data;
+    },
+
+    chart_data() {
+      return [
+        {
+          name: "Upload",
+          data: this.json_upload
+        },
+        {
+          name: "Download",
+          data: this.json_download
+        }
+      ];
+    }
   },
 
   data() {
@@ -80,8 +74,8 @@ export default {
       speed: 3,
       tx: "",
       rx: "",
-      tx_points: [0, 0, 0, 0, 0],
-      rx_points: [0, 0, 0, 0, 0],
+      tx_points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      rx_points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       tx_gradients: ["#1feaea"],
       rx_gradients: ["#f72047"]
     };
@@ -123,9 +117,6 @@ export default {
 
         this.tx_points.push(parseInt(this.tx / 1000));
         this.rx_points.push(parseInt(this.rx / 1000));
-
-        this.tx = prettyBytes(this.tx);
-        this.rx = prettyBytes(this.rx);
 
         this.tx_points.shift();
         this.rx_points.shift();
