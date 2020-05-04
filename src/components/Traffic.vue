@@ -3,30 +3,15 @@
     <v-card>
       <v-layout xs12>
         <v-flex xs12>
-          <v-sheet color="green lighten-5">
-            <v-sparkline
-              :value="points"
-              :height="traffic_height"
-              padding="20"
-              stroke-linecap="round"
-              smooth
-              :label-size="traffic_label_size"
-              line-width="2"
-              :gradient="gradients"
-              gradient-direction="bottom"
-              :labels="labels"
-            >
-              <template v-slot:label="item">{{item.value}}</template>
-            </v-sparkline>
-          </v-sheet>
-        </v-flex>
-        <v-flex xs2 v-show="!$vuetify.breakpoint.xsOnly">
-          <v-layout justify-center>
-            <div class="headline mt-9">
-              <v-icon x-large>mdi-download-network</v-icon>
-              {{actual_label}}
-            </div>
-          </v-layout>
+          <v-container py-1>
+            <area-chart
+              :height="$vuetify.breakpoint.xsOnly ? 30 : 70"
+              :data="chart_data"
+              :bytes="true"
+              :library="{tooltips: {mode: 'nearest', intersect: false}}"
+              :xtitle="rx | prettyBytes"
+            />
+          </v-container>
         </v-flex>
       </v-layout>
     </v-card>
@@ -36,41 +21,36 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-const prettyBytes = require("pretty-bytes");
 
 export default {
   name: "Traffic",
 
   computed: {
     ...mapState(["api_url"]),
-    traffic_height() {
-      var value = 0;
-      if (this.$vuetify.breakpoint.xsOnly) {
-        value = 70;
-      } else {
-        value = 30;
-      }
-      return value;
-    },
 
-    traffic_label_size() {
-      if (this.$vuetify.breakpoint.xsOnly) {
-        return 10;
-      } else {
-        return 4;
-      }
+    chart_data() {
+      return [
+        {
+          name: "Upload",
+          data: this.tx_points.map((p, index) => [index, p])
+        },
+        {
+          name: "Download",
+          data: this.rx_points.map((p, index) => [index, p])
+        }
+      ];
     }
   },
 
   data() {
     return {
       watch: true,
-      traffic: 0,
       speed: 1,
-      points: [],
-      labels: [],
-      actual_label: "",
-      gradients: ["#2196f3"]
+      max: 20,
+      tx: 0,
+      rx: 0,
+      tx_points: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      rx_points: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     };
   },
 
@@ -100,18 +80,22 @@ export default {
         });
         try {
           result = result.data.data.router.wanInterfaceTraffic;
-          result = parseInt(result);
+          console.log(result)
+          var tx = result.split("/")[0]
+          var rx = result.split("/")[1]
 
-          this.traffic = result;
-          this.set_now_traffic(prettyBytes(result))
+          tx = parseInt(tx);
+          rx = parseInt(rx);
 
-          this.points.push(result);
-          this.points.shift();
+          this.tx = tx;
+          this.rx = rx;
+          this.tx_points.push(tx);
+          this.rx_points.push(rx);
 
-          var label = prettyBytes(result);    
-          this.labels.push(label);
-          this.labels.shift();
-          this.actual_label = label;
+          this.tx_points.shift();
+          this.rx_points.shift();
+
+
         } catch (error) {
           console.log(error);
         }
@@ -119,22 +103,12 @@ export default {
         console.log(error);
         return [];
       } finally {
-        setTimeout(this.callTraffic, 1000 * parseInt(this.speed));
-      }
-    },
-    set_labels_and_points() {
-      if (this.$vuetify.breakpoint.xsOnly) {
-        this.points = [0, 0, 0, 0, 0];
-        this.labels = [0, 0, 0, 0, 0];
-      } else {
-        this.points = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        this.labels = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        setTimeout(this.callTraffic, 1000 * this.speed);
       }
     }
   },
 
   created() {
-    this.set_labels_and_points();
     this.callTraffic();
   }
 };

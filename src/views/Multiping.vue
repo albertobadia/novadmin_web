@@ -1,12 +1,11 @@
 <template>
   <div>
     <v-data-table
+      dense
       class="mt-12"
       :items-per-page="100"
-      sort-by="rtt"
+      sort-by="node.rtt"
       :sort-desc="true"
-      dense
-      :loading="loading"
       :search="search"
       :headers="headers"
       :items="items"
@@ -40,7 +39,6 @@
         </v-app-bar>
 
         <v-app-bar dark dense flat v-if="$vuetify.breakpoint.xsOnly">
-          <v-chip>{{now_traffic}}</v-chip>
           <v-layout justify-end>
             <v-chip class="mx-1" style="width:100px">
               Tráfico
@@ -54,36 +52,32 @@
         </v-app-bar>
       </template>
 
-      <template v-slot:item.pk="{item}">
-        <v-chip small dark v-bind:class="online_color(item.online)">{{item.pk}}</v-chip>
+      <template v-slot:item.node.pk="{item}">
+        <v-chip small dark :class="item.node.online ? 'green' : 'red'">{{item.node.pk}}</v-chip>
       </template>
 
-      <template v-slot:item.address="{item}">
-        <v-chip
-          :small="$vuetify.breakpoint.xsOnly"
-          @click="open_node(item.address)"
-          class="my-1"
-        >{{item.address}}</v-chip>
+      <template v-slot:item.node.address="{item}">
+        <v-chip small @click="open_node(item.node.address)" class="my-1">{{item.node.address}}</v-chip>
       </template>
 
-      <template v-slot:item.nombre="{item}">
-        <div v-if="!$vuetify.breakpoint.xsOnly">{{item.nombre}}</div>
+      <template v-slot:item.node.nombre="{item}">
+        <div v-if="!$vuetify.breakpoint.xsOnly">{{item.node.nombre}}</div>
         <v-chip
           dark
-          v-bind:class="online_color(item.online)"
+          :class="item.node.online ? 'green' : 'red'"
           small
           v-if="$vuetify.breakpoint.xsOnly"
-        >{{item.nombre}}</v-chip>
+        >{{item.node.nombre}}</v-chip>
       </template>
 
-      <template v-slot:header.rtt>RTT (ms)</template>
+      <template v-slot:header.node.rtt>RTT (ms)</template>
 
-      <template v-slot:item.downAt="{item}">
-        <div v-if="item.online">-</div>
-        <div v-if="!item.online">{{down_diff(item.downAt)}}</div>
+      <template v-slot:item.node.downAt="{item}">
+        <div v-if="item.node.online">-</div>
+        <div v-if="!item.node.online">{{down_diff(item.node.downAt)}}</div>
       </template>
 
-      <template v-slot:header.pk>
+      <template v-slot:header.node.pk>
         <NodeForm @done="queryNodes" />
       </template>
     </v-data-table>
@@ -108,30 +102,23 @@ export default {
 
   data() {
     return {
-      loading: false,
       search: "",
       enabled: true,
       sleep: 1,
       items: [],
-      show_trafico: true
+      show_trafico: true,
+      headers: [
+        { text: "", value: "node.pk" },
+        { text: "Nombre", value: "node.nombre" },
+        { text: "IP", value: "node.address" },
+        { text: "RTT", value: "node.rtt" },
+        { text: "Downtime", value: "node.downAt" }
+      ]
     };
   },
 
   computed: {
-    ...mapState(["api_url", "now_traffic"]),
-    headers() {
-      var list = [
-        { text: "Nombre", value: "nombre" },
-        { text: "IP", value: "address" },
-        { text: "Downtime", value: "downAt" },
-        { text: "RTT", value: "rtt" }
-      ];
-      if (!this.$vuetify.breakpoint.xsOnly) {
-        list.unshift({ text: "Id", value: "pk", sortable: false, width: 30 });
-      }
-
-      return list;
-    }
+    ...mapState(["api_url", "now_traffic"])
   },
 
   methods: {
@@ -159,14 +146,6 @@ export default {
 
     open_node(address) {
       window.open("http://" + address, "_blank");
-    },
-
-    online_color(online) {
-      if (online) {
-        return "green lighten-1";
-      } else {
-        return "red lighten-1";
-      }
     },
 
     callQueryNodes() {
@@ -201,11 +180,7 @@ export default {
             }`
           }
         });
-        this.items = [];
-        result = await result.data.data.nodes.edges;
-        for (var item of result) {
-          this.items.push(item.node);
-        }
+        this.items = await result.data.data.nodes.edges;
       } catch (error) {
         console.log(error);
         return [];
