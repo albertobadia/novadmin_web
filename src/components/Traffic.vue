@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       watch: true,
-      speed: 1,
+      speed: 2,
       max: 20,
       tx: 0,
       rx: 0,
