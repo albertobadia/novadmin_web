@@ -1,19 +1,15 @@
 <template>
   <div>
     <v-card>
-      <v-layout xs12>
-        <v-flex xs12>
-          <v-container py-1>
-            <area-chart
-              :height="$vuetify.breakpoint.xsOnly ? 30 : 70"
-              :data="chart_data"
-              :bytes="true"
-              :library="{tooltips: {mode: 'nearest', intersect: false}}"
-              :xtitle="rx | prettyBytes"
-            />
-          </v-container>
-        </v-flex>
-      </v-layout>
+      <v-container py-1>
+        <area-chart
+          :height="$vuetify.breakpoint.xsOnly ? 30 : 70"
+          :data="chart_data"
+          :bytes="true"
+          :library="{tooltips: {mode: 'nearest', intersect: false}}"
+          :xtitle="rx | prettyBytes"
+        />
+      </v-container>
     </v-card>
   </div>
 </template>
@@ -49,8 +45,30 @@ export default {
       max: 20,
       tx: 0,
       rx: 0,
-      tx_points: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      rx_points: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      tx_points: [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      rx_points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     };
   },
 
@@ -80,9 +98,9 @@ export default {
         });
         try {
           result = result.data.data.router.wanInterfaceTraffic;
-          console.log(result)
-          var tx = result.split("/")[0]
-          var rx = result.split("/")[1]
+          console.log(result);
+          var tx = result.split("/")[0];
+          var rx = result.split("/")[1];
 
           tx = parseInt(tx);
           rx = parseInt(rx);
@@ -94,8 +112,6 @@ export default {
 
           this.tx_points.shift();
           this.rx_points.shift();
-
-
         } catch (error) {
           console.log(error);
         }
