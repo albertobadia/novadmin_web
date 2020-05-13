@@ -45,7 +45,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["mkapi_url"]),
+    ...mapState(["api_url"]),
 
     json_points() {
       var n = 1;
@@ -55,6 +55,36 @@ export default {
         n += 1;
       }
       return data;
+    },
+
+    query_data() {
+      if (!this.arp) {
+        return (
+          `
+              query
+              {
+                ping(host:"` +
+          this.host +
+          `"){
+                  result
+                }
+              }
+              `
+        );
+      } else {
+        return (
+          `
+              query
+              {
+                pingarp(host:"` +
+          this.host +
+          `", interface: "bridge1"){
+                  result
+                }
+              }
+              `
+        );
+      }
     }
   },
 
@@ -86,26 +116,32 @@ export default {
 
     async queryPing() {
       try {
-        this.seq += 1;
+        this.seq += 1
         let result = await axios({
-          method: "GET",
-          url: this.mkapi_url + "pingarp?address=" + this.host + "&interface=bridge1",
+          method: "POST",
+          url: this.api_url,
           headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+            Authorization: "JWT " + this.$cookies.get("token")
           },
+          data: {
+            query: this.query_data
+          }
         });
         try {
           result = await result.data;
-          console.log(result)
-
-          if (result.received) {
+          if (!this.arp){
+            result = JSON.parse(result.data.ping.result)
+          } else {
+            result = JSON.parse(result.data.pingarp.result)
+          }
+          
+          if (result.received){
             result = parseInt(result.time);
           } else {
-            result = -1;
+            result = -1
           }
-
-          this.time = result;
+          
+          this.time = result
           this.points.push(result);
           this.points.shift();
         } catch (error) {
@@ -113,7 +149,6 @@ export default {
         }
       } catch (error) {
         console.log(error);
-        setTimeout(this.callPing, 1000 * parseInt(this.speed));
         return [];
       } finally {
         setTimeout(this.callPing, 1000 * parseInt(this.speed));
