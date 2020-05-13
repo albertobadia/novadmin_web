@@ -89,10 +89,15 @@ export default {
         this.seq += 1;
         let result = await axios({
           method: "GET",
-          url: this.mkapi_url + "ping/" + this.host
+          url: this.mkapi_url + "pingarp?address=" + this.host + "&interface=bridge1",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+          },
         });
         try {
           result = await result.data;
+          console.log(result)
 
           if (result.received) {
             result = parseInt(result.time);
@@ -108,6 +113,7 @@ export default {
         }
       } catch (error) {
         console.log(error);
+        setTimeout(this.callPing, 1000 * parseInt(this.speed));
         return [];
       } finally {
         setTimeout(this.callPing, 1000 * parseInt(this.speed));

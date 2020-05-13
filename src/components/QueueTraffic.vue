@@ -93,6 +93,10 @@ export default {
         let result = await axios({
           method: "GET",
           url: this.mkapi_url + "queue/traffic/" + this.name,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+          },
         });
         result = await result.data.rate;
 
