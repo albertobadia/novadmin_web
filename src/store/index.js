@@ -7,6 +7,7 @@ export default new Vuex.Store({
   state: {
     site_title: "HPSJ Laboratorio",
     api_url: "https://server.novadmin.dynu.net/",
+    mkapi_url: "https://mkapi.novadmin.dynu.net/",
     title: "",
     force_show_title: false,
     now_traffic: ""

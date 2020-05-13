@@ -14,7 +14,7 @@
       </v-app-bar>
 
       <v-container>
-        <area-chart :data="chart_data" height="150px"></area-chart>
+        <area-chart :bytes="true" :data="chart_data" height="150px"></area-chart>
       </v-container>
     </v-card>
   </div>
@@ -33,7 +33,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["api_url"]),
+    ...mapState(["mkapi_url"]),
 
     json_upload() {
       var n = 1;
@@ -91,26 +91,10 @@ export default {
     async queryTraffic() {
       try {
         let result = await axios({
-          method: "POST",
-          url: this.api_url,
-          headers: {
-            Authorization: "JWT " + this.$cookies.get("token")
-          },
-          data: {
-            query:
-              `
-              query
-              {
-                queue(name:"` +
-              this.name +
-              `"){
-                  rate
-                }
-              }
-              `
-          }
+          method: "GET",
+          url: this.mkapi_url + "queue/traffic/" + this.name,
         });
-        result = await result.data.data.queue.rate;
+        result = await result.data.rate;
 
         this.tx = parseInt(result.split("/")[0]);
         this.rx = parseInt(result.split("/")[1]);

@@ -21,18 +21,26 @@
             single-line
             clearable
           ></v-text-field>
+
           <v-btn icon @click="queryReclamos">
             <v-icon>mdi-cached</v-icon>
           </v-btn>
+
           <v-layout justify-end>
             <v-chip class="mr-2">
-              <v-switch class="mt-6 mr-2" v-model="abierto" @change="queryReclamos"></v-switch>
-              <div v-show="abierto">Abiertos</div>
-              <div v-show="!abierto">Cerrados</div>
+              <v-select
+                style="width: 100px"
+                :selected="items[0]"
+                hide-details
+                :items="estado_options"
+                v-model="estado"
+                @change="queryReclamos"
+              ></v-select>
             </v-chip>
+
             <v-chip>
               <v-checkbox
-                :disabled="!abierto"
+                :disabled="estado == 'Cerrado'"
                 class="mt-6 mr-2"
                 v-model="imprimir"
                 @change="queryReclamos"
@@ -46,7 +54,7 @@
 
       <template v-slot:item.pk="{item}">
         <v-layout>
-          <reclamo_menu class="mr-1" v-bind:reclamo="item.pk" />
+          <reclamo_menu class="mr-1" v-bind:reclamo="item.pk" @done="queryReclamos" />
           <ping v-bind:servicio="item.servicio.pk" />
         </v-layout>
       </template>
@@ -55,12 +63,19 @@
         <v-chip :to="'/cliente/' + item.servicio.cliente.pk">{{item.servicio.cliente.nombre}}</v-chip>
       </template>
 
-      <template v-slot:item.fecha="{item}">{{formatDate(item.fecha)}}</template>
+      <template v-slot:item.fecha="{item}">
+        <v-chip>{{formatDate(item.fecha)}}</v-chip>
+      </template>
 
       <template v-slot:item.asunto="{item}">
         <div>
           <v-card class="ml-3 my-2">
-            <v-card-text class="black--text">{{item.asunto}}</v-card-text>
+            <v-card-text class="black--text">
+              <v-layout>
+                <reclamo_respuestas v-if="item.respuesta" :reclamo="item.pk" />
+                {{item.asunto}}
+              </v-layout>
+            </v-card-text>
           </v-card>
         </div>
         <div v-if="item.respuesta">
@@ -79,30 +94,51 @@
 import { mapState, mapMutations } from "vuex";
 import reclamo_menu from "@/components/reclamo/menu.vue";
 import ping from "@/components/ping.vue";
+import reclamo_respuestas from "@/components/reclamo/respuestas.vue";
 
 export default {
   name: "Reclamos",
 
   components: {
     reclamo_menu,
-    ping
+    ping,
+    reclamo_respuestas
+  },
+
+  data() {
+    return {
+      loading: false,
+      search: "",
+      items: [],
+      abierto: true,
+      imprimir: true,
+      order_by: "fecha",
+      order_desc: true,
+      headers: [
+        { text: "Acciones", value: "pk" },
+        { text: "Creacion", value: "fecha" },
+        { text: "Cliente", value: "servicio.cliente.nombre" },
+        { text: "Asunto", value: "asunto" }
+      ],
+      estado_options: [
+        { text: "Abiertos", value: "Abierto" },
+        { text: "Cerrados", value: "Cerrado" }
+      ],
+      estado: "Abierto"
+    };
   },
 
   computed: {
     ...mapState(["api_url"]),
 
     filters() {
-      var string = 'orderBy: "-pk"';
+      var string = 'orderBy: "-pk", estado: "' + this.estado + '"';
 
-      if (this.abierto) {
-        string += 'estado: "Abierto"';
-
+      if (this.estado == "Abierto") {
         var imprimir = this.imprimir.toString();
         imprimir = imprimir[0].toUpperCase() + imprimir.slice(1);
 
         string += ',imprimir: "' + imprimir + '"';
-      } else {
-        string += 'estado: "Cerrado"';
       }
 
       string += ",first: 100";
@@ -187,24 +223,6 @@ export default {
         this.loading = false;
       }
     }
-  },
-
-  data() {
-    return {
-      loading: false,
-      search: "",
-      items: [],
-      abierto: true,
-      imprimir: true,
-      order_by: "fecha",
-      order_desc: true,
-      headers: [
-        { text: "Acciones", value: "pk" },
-        { text: "Creacion", value: "fecha" },
-        { text: "Cliente", value: "servicio.cliente.nombre" },
-        { text: "Asunto", value: "asunto" }
-      ]
-    };
   },
 
   created() {

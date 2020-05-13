@@ -28,15 +28,25 @@
               </v-flex>
 
               <v-flex xs12 sm6>
-                <v-btn block dark class="blue mt-3" v-show="!show_save">Cerrar reclamo</v-btn>
-                <reclamo_respuestas v-bind:reclamo="reclamo" />
+                <v-btn
+                  block
+                  dark
+                  class="blue mt-3"
+                  v-show="!show_save && estado != 'Cerrado'"
+                >Cerrar reclamo</v-btn>
               </v-flex>
 
               <v-flex xs12 sm6>
                 <v-checkbox class="ml-6" label="Atender" v-model="imprimir"></v-checkbox>
               </v-flex>
 
-              <v-btn block dark class="blue" v-show="show_save">Guardar cambios</v-btn>
+              <v-btn
+                block
+                dark
+                class="blue"
+                v-show="show_save"
+                @click="updateReclamo"
+              >Guardar cambios</v-btn>
             </v-layout>
           </v-container>
         </v-card>
@@ -48,14 +58,9 @@
 
 <script>
 import { mapState } from "vuex";
-import reclamo_respuestas from "@/components/reclamo/respuestas.vue";
 
 export default {
   name: "reclamo_menu",
-
-  components: {
-    reclamo_respuestas
-  },
 
   props: {
     reclamo: Number
@@ -65,6 +70,7 @@ export default {
     return {
       show: false,
       valid: false,
+      estado: "",
       pre_asunto: "",
       asunto: "",
       nombre: "",
@@ -76,6 +82,19 @@ export default {
 
   computed: {
     ...mapState(["api_url"]),
+
+    string_data() {
+      var string =
+        "id: " + this.reclamo + ', asunto: "' + this.asunto + '", imprimir: ';
+
+      if (this.imprimir) {
+        string += '"True"';
+      } else {
+        string += '"False"';
+      }
+
+      return string;
+    },
 
     show_save() {
       return (
@@ -113,7 +132,9 @@ export default {
                 pk
                 asunto
                 imprimir
+                estado
                 servicio{
+                  direccion
                   cliente{
                     nombre
                   }
@@ -123,6 +144,8 @@ export default {
           }
         });
         result = await result.data.data.reclamo;
+
+        this.estado = result.estado;
 
         this.pre_asunto = result.asunto;
         this.asunto = result.asunto;
@@ -139,6 +162,36 @@ export default {
         return [];
       } finally {
         this.loading = false;
+      }
+    },
+
+    async updateReclamo() {
+      console.log(this.string_data);
+      try {
+        let result = await axios({
+          method: "POST",
+          url: this.api_url,
+          headers: {
+            Authorization: "JWT " + this.$cookies.get("token")
+          },
+          data: {
+            query:
+              `mutation{
+                updateReclamo(newReclamo:{` +
+              this.string_data +
+              `}){
+                  ok
+                }
+              }`
+          }
+        });
+        result = await result.data.data;
+        console.log(result);
+      } catch (error) {
+        console.log(error);
+        return false;
+      } finally {
+        this.$emit("done");
       }
     }
   }

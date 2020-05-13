@@ -98,7 +98,6 @@ export default {
         });
         try {
           result = result.data.data.router.wanInterfaceTraffic;
-          console.log(result);
           var tx = result.split("/")[0];
           var rx = result.split("/")[1];
 

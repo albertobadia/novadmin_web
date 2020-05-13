@@ -45,7 +45,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["api_url"]),
+    ...mapState(["mkapi_url"]),
 
     json_points() {
       var n = 1;
@@ -55,36 +55,6 @@ export default {
         n += 1;
       }
       return data;
-    },
-
-    query_data() {
-      if (!this.arp) {
-        return (
-          `
-              query
-              {
-                ping(host:"` +
-          this.host +
-          `"){
-                  result
-                }
-              }
-              `
-        );
-      } else {
-        return (
-          `
-              query
-              {
-                pingarp(host:"` +
-          this.host +
-          `", interface: "bridge1"){
-                  result
-                }
-              }
-              `
-        );
-      }
     }
   },
 
@@ -116,32 +86,21 @@ export default {
 
     async queryPing() {
       try {
-        this.seq += 1
+        this.seq += 1;
         let result = await axios({
-          method: "POST",
-          url: this.api_url,
-          headers: {
-            Authorization: "JWT " + this.$cookies.get("token")
-          },
-          data: {
-            query: this.query_data
-          }
+          method: "GET",
+          url: this.mkapi_url + "ping/" + this.host
         });
         try {
           result = await result.data;
-          if (!this.arp){
-            result = JSON.parse(result.data.ping.result)
-          } else {
-            result = JSON.parse(result.data.pingarp.result)
-          }
-          
-          if (result.received){
+
+          if (result.received) {
             result = parseInt(result.time);
           } else {
-            result = -1
+            result = -1;
           }
-          
-          this.time = result
+
+          this.time = result;
           this.points.push(result);
           this.points.shift();
         } catch (error) {
