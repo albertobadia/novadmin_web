@@ -42,33 +42,10 @@ export default {
     return {
       watch: true,
       speed: 2,
-      max: 20,
       tx: 0,
       rx: 0,
-      tx_points: [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      rx_points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      tx_points: [],
+      rx_points: []
     };
   },
 
@@ -97,20 +74,22 @@ export default {
           }
         });
         try {
-          result = result.data.data.router.wanInterfaceTraffic;
-          var tx = result.split("/")[0];
-          var rx = result.split("/")[1];
+          result = result.data.data.router.wanInterfaceTraffic.split("-")
 
-          tx = parseInt(tx);
-          rx = parseInt(rx);
+          this.tx_points = []
+          this.rx_points = []
 
-          this.tx = tx;
-          this.rx = rx;
-          this.tx_points.push(tx);
-          this.rx_points.push(rx);
+          for (let point of result){
+            let tx = point.split("/")[0];
+            let rx = point.split("/")[1];
 
-          this.tx_points.shift();
-          this.rx_points.shift();
+            this.tx_points.push(tx);
+            this.rx_points.push(rx);
+          }
+
+          this.tx = parseInt(result[result.length -1].split("/")[0]);
+          this.rx = parseInt(result[result.length -1].split("/")[1]);
+
         } catch (error) {
           console.log(error);
         }
